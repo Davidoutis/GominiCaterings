@@ -1276,7 +1276,7 @@
             document.getElementById('totalCost').textContent = `₹${totalCost}`;
         }
 
-        // Simplified shareOnWhatsApp function
+        // Complete shareOnWhatsApp function - full details
         function shareOnWhatsApp() {
             const eventName = document.getElementById('eventName').value || 'Catering Event';
             const guests = parseInt(document.getElementById('guestCount').value) || 0;
@@ -1285,63 +1285,125 @@
             const customItemsByCategory = getSelectedItemsByCategory();
             const customPrice = parseFloat(document.getElementById('customPrice').value) || 0;
             
-            // Format date as DD/MM/YYYY
-            const today = new Date();
-            const dateStr = `${today.getDate().toString().padStart(2, '0')}/${(today.getMonth() + 1).toString().padStart(2, '0')}/${today.getFullYear()}`;
-            
-            let message = `*GOMINI CATERINGS*\n\n`;
-            message += `Customer: ${customerName}\n`;
-            message += `Event: ${eventName}\n`;
-            message += `Date: ${dateStr}\n`;
-            message += `Guests: ${guests}\n\n`;
+            let message = `🍽️ *GOMINI CATERINGS* 🍽️\n`;
+            message += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n`;
+            message += `📋 *CATERING QUOTATION*\n\n`;
+            message += `👤 *Customer:* ${customerName}\n`;
+            message += `🎉 *Event:* ${eventName}\n`;
+            message += `👥 *Guests:* ${guests}\n`;
+            message += `📅 *Date:* ${new Date().toLocaleDateString()}\n`;
+            message += `⏰ *Time:* ${new Date().toLocaleTimeString()}\n\n`;
             
             let totalCost = 0;
+            let comboCost = 0;
+            let customCost = 0;
             
-            // Combo package details
+            // Add combo details
             if (selectedCombo) {
                 const comboType = selectedCombo.dataset.combo;
                 const comboInfo = comboData[comboType];
                 const discountInput = selectedCombo.closest('.combo-select').querySelector('.discount-input');
                 const discount = parseFloat(discountInput.value) || 0;
                 const finalPrice = comboInfo.price - discount;
-                totalCost += finalPrice * guests;
+                comboCost = finalPrice * guests;
                 
-                message += `*Package: ${comboInfo.name} Combo*\n\n`;
+                message += `🍽️ *COMBO PACKAGE SELECTED*\n`;
+                message += `━━━━━━━━━━━━━━━━━━━━━━━━\n`;
+                message += `📦 *Package Name:* ${comboInfo.name} Combo\n`;
+                message += `💰 *Original Price:* ₹${comboInfo.price} per plate\n`;
+                
+                if (discount > 0) {
+                    message += `🎁 *Discount Applied:* -₹${discount} per plate\n`;
+                    message += `💵 *Final Price:* ₹${finalPrice} per plate\n`;
+                }
+                
+                message += `\n📋 *Menu Items Included:*\n\n`;
                 
                 Object.entries(comboInfo.categories).forEach(([category, items]) => {
-                    message += `${category}:\n`;
-                    message += `${items.join(', ')}\n\n`;
+                    message += `🔸 *${category}:*\n`;
+                    items.forEach((item, index) => {
+                        message += `   ${index + 1}. ${item}\n`;
+                    });
+                    message += `\n`;
                 });
+                
+                message += `💰 *Combo Subtotal:* ₹${comboCost} (${guests} guests × ₹${finalPrice})\n\n`;
+                totalCost += comboCost;
             }
             
-            // Custom menu details
+            // Add custom menu details
             if (Object.keys(customItemsByCategory).length > 0 && customPrice > 0) {
-                totalCost += customPrice * guests;
+                const totalCustomItems = Object.values(customItemsByCategory).flat().length;
+                customCost = customPrice * guests;
                 
-                message += `*Custom Menu:*\n\n`;
+                message += `🍴 *CUSTOM MENU SELECTION*\n`;
+                message += `━━━━━━━━━━━━━━━━━━━━━━━\n`;
+                message += `📝 *Total Items Selected:* ${totalCustomItems}\n`;
+                message += `💰 *Price per Plate:* ₹${customPrice}\n\n`;
+                message += `📋 *Selected Items by Category:*\n\n`;
                 
                 Object.entries(customItemsByCategory).forEach(([category, items]) => {
-                    message += `${category}:\n`;
-                    message += `${items.join(', ')}\n\n`;
+                    message += `🔹 *${category}:*\n`;
+                    items.forEach((item, index) => {
+                        message += `   ${index + 1}. ${item}\n`;
+                    });
+                    message += `\n`;
                 });
+                
+                message += `💰 *Custom Menu Subtotal:* ₹${customCost} (${guests} guests × ₹${customPrice})\n\n`;
+                totalCost += customCost;
             }
             
-            // Total and contact
-            message += `*GRAND TOTAL: ₹${totalCost}*\n\n`;
-            message += `Contact: 9704275597 | 9642193713 | 7075353099\n\n`;
-            message += `Thank you for choosing Gomini Caterings!`;
+            // Add summary
+            message += `━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
+            message += `📊 *COST SUMMARY*\n`;
+            message += `━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
             
-            // Send to WhatsApp
+            if (comboCost > 0) {
+                message += `• Combo Package: ₹${comboCost}\n`;
+            }
+            if (customCost > 0) {
+                message += `• Custom Menu: ₹${customCost}\n`;
+            }
+            
+            message += `\n💰 *GRAND TOTAL: ₹${totalCost}*\n`;
+            message += `━━━━━━━━━━━━━━━━━━━━━━━━\n\n`;
+            
+            // Add terms and conditions
+            message += `📜 *TERMS & CONDITIONS:*\n`;
+            message += `• 50% advance payment required\n`;
+            message += `• Prices include service charges\n`;
+            message += `• Final count 2 days before event\n`;
+            message += `• Cancellation charges apply\n\n`;
+            
+            // Add contact information
+            message += `━━━━━━━━━━━━━━━━━━━━━━━━\n`;
+            message += `📞 *CONTACT INFORMATION*\n`;
+            message += `━━━━━━━━━━━━━━━━━━━━━━━━\n`;
+            message += `🏢 *Gomini Caterings*\n`;
+            message += `📱 9704275597 | 9642193713 | 7075353099\n`;
+            message += `📍 7-16/c Nandamuri Nagar, Gopalapatnam\n`;
+            message += `    Visakhapatnam - 530027\n`;
+            message += `🏛️ GST No: 37ATTPA1425H1ZR\n\n`;
+            
+            message += `✨ *Thank you for choosing Gomini Caterings!*\n`;
+            message += `🙏 *We look forward to making your event memorable.*\n\n`;
+            
+            
+            // Encode and send to WhatsApp
             const encodedMessage = encodeURIComponent(message);
+            
+            // Try different methods based on device
             const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
             
             if (isMobile) {
+                // For mobile devices
                 window.location.href = `whatsapp://send?text=${encodedMessage}`;
             } else {
+                // For desktop
                 window.open(`https://web.whatsapp.com/send?text=${encodedMessage}`, '_blank');
             }
-        }
-        
+        }        
         function generatePDF() {
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF('p', 'mm', 'a4');
