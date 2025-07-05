@@ -1276,7 +1276,7 @@
             document.getElementById('totalCost').textContent = `₹${totalCost}`;
         }
 
-        // Alternative: Split long messages
+        // Simplified shareOnWhatsApp function
         function shareOnWhatsApp() {
             const eventName = document.getElementById('eventName').value || 'Catering Event';
             const guests = parseInt(document.getElementById('guestCount').value) || 0;
@@ -1285,16 +1285,19 @@
             const customItemsByCategory = getSelectedItemsByCategory();
             const customPrice = parseFloat(document.getElementById('customPrice').value) || 0;
             
-            // Create a shorter summary message
-            let message = `*GOMINI CATERINGS - QUOTATION*\n\n`;
+            // Format date as DD/MM/YYYY
+            const today = new Date();
+            const dateStr = `${today.getDate().toString().padStart(2, '0')}/${(today.getMonth() + 1).toString().padStart(2, '0')}/${today.getFullYear()}`;
+            
+            let message = `*GOMINI CATERINGS*\n\n`;
             message += `Customer: ${customerName}\n`;
             message += `Event: ${eventName}\n`;
-            message += `Guests: ${guests}\n`;
-            message += `Date: ${new Date().toLocaleDateString()}\n\n`;
+            message += `Date: ${dateStr}\n`;
+            message += `Guests: ${guests}\n\n`;
             
             let totalCost = 0;
-            let itemsList = '';
             
+            // Combo package details
             if (selectedCombo) {
                 const comboType = selectedCombo.dataset.combo;
                 const comboInfo = comboData[comboType];
@@ -1303,34 +1306,42 @@
                 const finalPrice = comboInfo.price - discount;
                 totalCost += finalPrice * guests;
                 
-                message += `Package: ${comboInfo.name} Combo @ ₹${finalPrice}/plate\n`;
+                message += `*Package: ${comboInfo.name} Combo*\n\n`;
                 
-                // Create separate items list
-                itemsList += `*${comboInfo.name} Combo Items:*\n`;
-                Object.entries(comboInfo.categories).forEach(([cat, items]) => {
-                    itemsList += `• ${items.join(', ')}\n`;
+                Object.entries(comboInfo.categories).forEach(([category, items]) => {
+                    message += `${category}:\n`;
+                    message += `${items.join(', ')}\n\n`;
                 });
             }
             
+            // Custom menu details
             if (Object.keys(customItemsByCategory).length > 0 && customPrice > 0) {
                 totalCost += customPrice * guests;
-                message += `Custom Menu @ ₹${customPrice}/plate\n`;
                 
-                itemsList += `\n*Custom Items:*\n`;
-                Object.values(customItemsByCategory).flat().forEach(item => {
-                    itemsList += `• ${item}\n`;
+                message += `*Custom Menu:*\n\n`;
+                
+                Object.entries(customItemsByCategory).forEach(([category, items]) => {
+                    message += `${category}:\n`;
+                    message += `${items.join(', ')}\n\n`;
                 });
             }
             
-            message += `\n*TOTAL: ₹${totalCost}*\n\n`;
-            message += `Contact: 9704275597\n`;
-            message += itemsList;
+            // Total and contact
+            message += `*GRAND TOTAL: ₹${totalCost}*\n\n`;
+            message += `Contact: 9704275597 | 9642193713 | 7075353099\n\n`;
+            message += `Thank you for choosing Gomini Caterings!`;
             
-            // Send message
+            // Send to WhatsApp
             const encodedMessage = encodeURIComponent(message);
-            window.open(`https://wa.me/?text=${encodedMessage}`, '_blank');
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            
+            if (isMobile) {
+                window.location.href = `whatsapp://send?text=${encodedMessage}`;
+            } else {
+                window.open(`https://web.whatsapp.com/send?text=${encodedMessage}`, '_blank');
+            }
         }
-                
+        
         function generatePDF() {
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF('p', 'mm', 'a4');
