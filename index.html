@@ -1,0 +1,2374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <title>Gomini Caterings - Menu & Quotation</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 10px;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            position: relative;
+            padding-bottom: 60px;
+        }        
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .logo-container {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+        
+        .logo-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .logo-placeholder {
+            width: 60px;
+            height: 60px;
+            border: 2px dashed #667eea;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #667eea;
+            font-size: 10px;
+            flex-shrink: 0;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+            font-size: clamp(1.8rem, 5vw, 2.5rem);
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .contact-info {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: clamp(0.8rem, 2vw, 0.9rem);
+            color: #666;
+            line-height: 1.6;
+        }
+        
+        .contact-info p {
+            margin-bottom: 5px;
+        }
+        
+        .event-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .input-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        label {
+            font-weight: 600;
+            color: #555;
+            margin-bottom: 8px;
+            font-size: clamp(0.9rem, 2vw, 1rem);
+        }
+        
+        input[type="text"],
+        input[type="number"] {
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            width: 100%;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+        }
+        
+        input[type="text"]:focus,
+        input[type="number"]:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        /* Prevent iOS zoom on input focus */
+        @media screen and (-webkit-min-device-pixel-ratio: 0) {
+            input[type="text"],
+            input[type="number"] {
+                font-size: 16px !important;
+            }
+        }
+        
+        .combo-packages {
+            background: #f0f4ff;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+        
+        .combo-title {
+            font-size: clamp(1.2rem, 3vw, 1.5rem);
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .combo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 15px;
+        }
+        
+        .combo-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            border: 2px solid #e0e0e0;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+        
+        .combo-card:active {
+            transform: scale(0.98);
+        }
+        
+        .combo-card.selected {
+            border-color: #667eea;
+            background: #f0f4ff;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.2);
+        }
+        
+        .combo-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .combo-name {
+            font-weight: 700;
+            color: #667eea;
+            font-size: clamp(1rem, 2.5vw, 1.2rem);
+        }
+        
+        .combo-price {
+            font-weight: 600;
+            color: #764ba2;
+            font-size: clamp(0.95rem, 2vw, 1.1rem);
+        }
+        
+        .combo-items {
+            font-size: clamp(0.85rem, 2vw, 0.9rem);
+            color: #666;
+            line-height: 1.6;
+        }
+        
+        .combo-category-list {
+            margin-top: 10px;
+        }
+        
+        .combo-category {
+            margin-bottom: 8px;
+        }
+        
+        .combo-category-name {
+            font-weight: 600;
+            color: #667eea;
+            font-size: 0.85rem;
+            margin-bottom: 4px;
+        }
+        
+        .combo-category-items {
+            font-size: 0.82rem;
+            color: #666;
+            padding-left: 10px;
+        }
+        
+        .combo-select {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .discount-input {
+            width: 120px;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 14px;
+        }
+        
+        .checkbox, .radio {
+            width: 22px;
+            height: 22px;
+            accent-color: #667eea;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+        
+        .custom-price-section {
+            background: #e8f0ff;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            border: 2px solid #667eea;
+            display: none;
+        }
+        
+        .custom-price-section.show {
+            display: block;
+        }
+        
+        .add-dish-section {
+            background: #e8f0ff;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .menu-section {
+            margin-bottom: 25px;
+        }
+        
+        .menu-section h2 {
+            text-align: center;
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: clamp(1.2rem, 3vw, 1.5rem);
+        }
+        
+        .menu-category {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .category-title {
+            font-size: clamp(1rem, 2.5vw, 1.2rem);
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .category-icon {
+            margin-right: 10px;
+            font-size: 1.3em;
+        }
+        
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .menu-item:last-child {
+            border-bottom: none;
+        }
+        
+        .item-name {
+            font-weight: 500;
+            color: #333;
+            flex: 1;
+            font-size: clamp(0.9rem, 2vw, 1rem);
+        }
+        
+        .summary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 25px;
+        }
+        
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: clamp(0.95rem, 2vw, 1.1rem);
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .summary-row span:last-child {
+            font-weight: 600;
+        }
+        
+        .total-row {
+            border-top: 2px solid rgba(255,255,255,0.3);
+            padding-top: 15px;
+            margin-top: 15px;
+            font-size: clamp(1.2rem, 3vw, 1.5rem);
+            font-weight: 700;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            font-size: clamp(0.9rem, 2vw, 1rem);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+        }
+        
+        .btn-pdf {
+            background: linear-gradient(45deg, #28a745, #20c997);
+            color: white;
+        }
+        
+        .btn-whatsapp {
+            background: linear-gradient(45deg, #25d366, #128c7e);
+            color: white;
+        }
+        
+        .btn-jpeg {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            color: white;
+        }
+        
+        .btn-secondary {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 2px solid rgba(255,255,255,0.3);
+        }
+        
+        .btn-add {
+            background: #667eea;
+            color: white;
+            padding: 10px 20px;
+        }
+        /* Creator Credit */
+        .creator-credit {
+            position: absolute;
+            bottom: 15px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-size: 12px;
+            color: #999;
+            padding: 10px;
+        }
+        
+        .creator-credit a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+        
+        .creator-credit a:hover {
+            color: #764ba2;
+            text-decoration: underline;
+        }        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .custom-dish-item {
+            background: #e8f0ff;
+            font-style: italic;
+        }
+        
+        /* Mobile specific styles */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+                border-radius: 15px;
+            }
+            
+            .header {
+                flex-direction: column;
+            }
+            
+            .logo-container {
+                width: 50px;
+                height: 50px;
+            }
+            .creator-credit {
+                font-size: 11px;
+            }
+
+            .logo-placeholder {
+                width: 50px;
+                height: 50px;
+            }
+            
+            .combo-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .discount-input {
+                width: 100px;
+            }
+            
+            .add-dish-section {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .add-dish-section input {
+                width: 100%;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+                padding: 15px;
+            }
+        }
+        
+        /* iOS specific fixes */
+        @supports (-webkit-touch-callout: none) {
+            input[type="text"],
+            input[type="number"] {
+                border-radius: 10px;
+            }
+        }
+        
+        /* Smooth scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        /* Loading state */
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+        
+        /* Quote modal styles */
+        .quote-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        
+        .quote-modal-content {
+            max-width: 700px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            position: relative;
+        }
+        
+        .close-modal {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 30px;
+            cursor: pointer;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo-container">
+                <img src="gcl.jpg" alt="Gomini Caterings Logo" onerror="this.parentElement.innerHTML='<div class=\'logo-placeholder\'>LOGO</div>'">
+            </div>
+            <h1>Gomini Caterings</h1>
+        </div>
+        
+        <div class="contact-info">
+            <p>📍 7-16/c Nandamuri Nagar, Gopalapatnam, Visakhapatnam-530027</p>
+            <p>📞 9704275597 | 9642193713 | 7075353099</p>
+            <p>GST No: 37ATTPA1425H1ZR</p>
+        </div>
+        
+        <div class="event-info">
+            <div class="input-group">
+                <label for="eventName">Event Name:</label>
+                <input type="text" id="eventName" placeholder="Enter event name">
+            </div>
+            <div class="input-group">
+                <label for="guestCount">Number of Guests:</label>
+                <input type="number" id="guestCount" value="50" min="1" onchange="calculateTotals()">
+            </div>
+            <div class="input-group">
+                <label for="customerName">Customer Name:</label>
+                <input type="text" id="customerName" placeholder="Enter customer name">
+            </div>
+        </div>
+        
+        <!-- Combo Packages Section -->
+        <div class="combo-packages">
+            <div class="combo-title">🍽️ Combo Packages (Select One or None)</div>
+            <div class="combo-grid">
+                <!-- Special Veg Combo -->
+                <div class="combo-card" onclick="selectCombo('special-veg', 180)">
+                    <div class="combo-header">
+                        <span class="combo-name">Special Veg</span>
+                        <span class="combo-price">₹180/plate</span>
+                    </div>
+                    <div class="combo-category-list" id="special-veg-categories">
+                        <!-- Categories will be populated by JavaScript -->
+                    </div>
+                    <div class="combo-select">
+                        <input type="radio" name="combo" class="radio combo-radio" data-combo="special-veg" data-price="180" onclick="event.stopPropagation()" onchange="calculateTotals()">
+                        <span>Select</span>
+                        <input type="number" class="discount-input" placeholder="Discount ₹" min="0" onclick="event.stopPropagation()" onchange="calculateTotals()">
+                    </div>
+                </div>
+                
+                <!-- Veg Combo -->
+                <div class="combo-card" onclick="selectCombo('veg', 150)">
+                    <div class="combo-header">
+                        <span class="combo-name">Veg</span>
+                        <span class="combo-price">₹150/plate</span>
+                    </div>
+                    <div class="combo-category-list" id="veg-categories">
+                        <!-- Categories will be populated by JavaScript -->
+                    </div>
+                    <div class="combo-select">
+                        <input type="radio" name="combo" class="radio combo-radio" data-combo="veg" data-price="150" onclick="event.stopPropagation()" onchange="calculateTotals()">
+                        <span>Select</span>
+                        <input type="number" class="discount-input" placeholder="Discount ₹" min="0" onclick="event.stopPropagation()" onchange="calculateTotals()">
+                    </div>
+                </div>
+                
+                <!-- Non Veg Combo -->
+                <div class="combo-card" onclick="selectCombo('non-veg', 230)">
+                    <div class="combo-header">
+                        <span class="combo-name">Non Veg</span>
+                        <span class="combo-price">₹230/plate</span>
+                    </div>
+                    <div class="combo-category-list" id="non-veg-categories">
+                        <!-- Categories will be populated by JavaScript -->
+                    </div>
+                    <div class="combo-select">
+                        <input type="radio" name="combo" class="radio combo-radio" data-combo="non-veg" data-price="230" onclick="event.stopPropagation()" onchange="calculateTotals()">
+                        <span>Select</span>
+                        <input type="number" class="discount-input" placeholder="Discount ₹" min="0" onclick="event.stopPropagation()" onchange="calculateTotals()">
+                    </div>
+                </div>
+                
+                <!-- Special Non Veg Combo -->
+                <div class="combo-card" onclick="selectCombo('special-non-veg', 350)">
+                    <div class="combo-header">
+                        <span class="combo-name">Special Non Veg</span>
+                        <span class="combo-price">₹350/plate</span>
+                    </div>
+                    <div class="combo-category-list" id="special-non-veg-categories">
+                        <!-- Categories will be populated by JavaScript -->
+                    </div>
+                    <div class="combo-select">
+                        <input type="radio" name="combo" class="radio combo-radio" data-combo="special-non-veg" data-price="350" onclick="event.stopPropagation()" onchange="calculateTotals()">
+                        <span>Select</span>
+                        <input type="number" class="discount-input" placeholder="Discount ₹" min="0" onclick="event.stopPropagation()" onchange="calculateTotals()">
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Custom Menu Section -->
+        <div class="menu-section">
+            <h2>🍴 Custom Menu Selection</h2>
+            
+            <!-- Add Custom Dish -->
+            <div class="add-dish-section">
+                <input type="text" id="newDishName" placeholder="Enter new dish name">
+                <button class="btn btn-add" onclick="addCustomDish()">Add Dish</button>
+            </div>
+            
+            <div class="menu-category" data-category="starters">
+                <div class="category-title">
+                    <span class="category-icon">🥘</span>
+                    Starters & Snacks
+                </div>
+                <div class="menu-item">
+                    <input type="checkbox" class="checkbox" onchange="updateCustomMenuVisibility()">
+                    <span class="item-name">Gulab Jamun</span>
+                </div>
+                <div class="menu-item">
+                    <input type="checkbox" class="checkbox" onchange="updateCustomMenuVisibility()">
+                    <span class="item-name">Puri</span>
+                </div>
+                <div class="menu-item">
+                    <input type="checkbox" class="checkbox" onchange="updateCustomMenuVisibility()">
+                    <span class="item-name">Vada</span>
+                </div>
+                <div class="menu-item">
+                    <input type="checkbox" class="checkbox" onchange="updateCustomMenuVisibility()">
+                    <span class="item-name">Pulihora (Tamarind Rice)</span>
+                </div>
+                <div class="menu-item">
+                    <input type="checkbox" class="checkbox" onchange="updateCustomMenuVisibility()">
+                    <span class="item-name">Spring Rolls</span>
+                </div>
+            </div>
+            
+            <div class="menu-category" data-category="rice-biryani">
+                <div class="category-title">
+                    <span class="category-icon">🍛</span>
+                    Main Course - Rice & Biryani
+                </div>
+                <div class="menu-item">
+                    <input type="checkbox" class="checkbox" onchange="updateCustomMenuVisibility()">
+                    <span class="item-name">Veg Biryani</span>
+                </div>
+                <div class="menu-item">
+                    <input type="checkbox" class="checkbox" onchange="updateCustomMenuVisibility()">
+                    <span class="item-name">Chicken Biryani</span>
+                </div>
+                <div class="menu-item">
+                    <input type="checkbox" class="checkbox" onchange="updateCustomMenuVisibility()">
+                    <span class="item-name">Mutton Biryani</span>
+                </div>
+                <div class="menu-item">
+                    <input type="checkbox" class="checkbox" onchange="updateCustomMenuVisibility()">
+                    <span class="item-name">Prawn Biryani</span>
+                </div>
+                <div class="menu-item">
+                    <input type="checkbox" class="checkbox" onchange="updateCustomMenuVisibility()">
+                    <span class="item-name">Fish Biryani</span>
+                </div>
+                <div class="menu-item">
+                    <input type="checkbox" class="checkbox" onchange="updateCustomMenuVisibility()">
+                    <span class="item-name">Paneer Biryani</span>
+                </div>
+                <div class="menu-item">
+                    <input type="checkbox" class="checkbox" onchange="updateCustomMenuVisibility()">
+                    <span class="item-name">Egg Biryani</span>
+                </div>
+                <div class="menu-item">
+                    <input type="checkbox" class="checkbox" onchange="updateCustomMenuVisibility()">
+                    <span class="item-name">Plain Dum Biryani</span>
+                </div>
+                <div class="menu-item">
+                    <input type="checkbox" class="checkbox" onchange="updateCustomMenuVisibility()">
+                    <span class="item-name">Chicken Dum Biryani</span>
+                </div>
+                <div class="menu-item">
+                    <input type="checkbox" class="checkbox" onchange="updateCustomMenuVisibility()">
+                    <span class="item-name">Plain Rice</span>
+                </div>
+                <div class="menu-item">
+                    <input type="checkbox" class="checkbox" onchange="updateCustomMenuVisibility()">
+                    <span class="item-name">Curd Rice</span>
+                </div>
+            </div>
+            
+            <div class="menu-category" data-category="veg-curries">
+                <div class="category-title">
+                    <span class="category-icon">🥘</span>
+                    Curries - Vegetarian
+                </div>
+                <div class="menu-item">
+                    <input type="checkbox" class="checkbox" onchange="updateCustomMenuVisibility()">
+                    <span class="item-name">Paneer Green Peas</span>
+                </div>
+                <div class="menu-item">
+                    <input type="checkbox" class="checkbox" onchange="updateCustomMenuVisibility()">
+                    <span class="item-name">Brinjal Curry</span>
+                </div>
+                <div class="menu-item">
+                    <input type="checkbox" class="checkbox" onchange="updateCustomMenuVisibility()">
+                    <span class="item-name">Veg Fry</span>
+                </div>
+                <div class="menu-item">
+                    <input type="checkbox" class="checkbox" onchange="updateCustomMenuVisibility()">
+                    <span class="item-name">Potato Kabuli Channa Curry</span>
+                </div>
+                <div class="menu-item">
+                    <input type="checkbox" class="checkbox" onchange="updateCustomMenuVisibility()">
+                    <span class="item-name">Paneer Curry</span>
+                </div>
+                <div class="menu-item">
+                    <input type="checkbox" class="checkbox" onchange="updateCustomMenuVisibility()">
+                    <span class="item-name">Potato Roast</span>
+                </div>
+            </div>
+            
+            <div class="menu-category" data-category="non-veg">
+                <div class="category-title">
+                    <span class="category-icon">🍖</span>
+                    Non-Vegetarian Items
+                </div>
+                <div class="menu-item">
+                    <input type="checkbox" class="checkbox" onchange="updateCustomMenuVisibility()">
+                    <span class="item-name">Chicken Curry</span>
+                </div>
+                <div class="menu-item">
+                    <input type="checkbox" class="checkbox" onchange="updateCustomMenuVisibility()">
+                    <span class="item-name">Mutton Curry</span>
+                </div>
+                <div class="menu-item">
+                    <input type="checkbox" class="checkbox" onchange="updateCustomMenuVisibility()">
+                    <span class="item-name">Fish Curry</span>
+                </div>
+                <div class="menu-item">
+                    <input type="checkbox" class="checkbox" onchange="updateCustomMenuVisibility()">
+                    <span class="item-name">Prawn Curry</span>
+                </div>
+                <div class="menu-item">
+                    <input type="checkbox" class="checkbox" onchange="updateCustomMenuVisibility()">
+                    <span class="item-name">Egg Curry</span>
+                </div>
+                <div class="menu-item">
+                    <input type="checkbox" class="checkbox" onchange="updateCustomMenuVisibility()">
+                    <span class="item-name">Chicken Fry</span>
+                </div>
+                <div class="menu-item">
+                    <input type="checkbox" class="checkbox" onchange="updateCustomMenuVisibility()">
+                    <span class="item-name">Mutton Fry</span>
+                </div>
+                <div class="menu-item">
+                    <input type="checkbox" class="checkbox" onchange="updateCustomMenuVisibility()">
+                    <span class="item-name">Fish Fry</span>
+                </div>
+                <div class="menu-item">
+                    <input type="checkbox" class="checkbox" onchange="updateCustomMenuVisibility()">
+                    <span class="item-name">Prawn Fry</span>
+                </div>
+            </div>
+            
+            <div class="menu-category" data-category="chinese">
+                <div class="category-title">
+                    <span class="category-icon">🥡</span>
+                    Chinese & Continental
+                </div>
+                <div class="menu-item">
+                    <input type="checkbox" class="checkbox" onchange="updateCustomMenuVisibility()">
+                    <span class="item-name">Chicken Manchurian</span>
+                </div>
+                <div class="menu-item">
+                    <input type="checkbox" class="checkbox" onchange="updateCustomMenuVisibility()">
+                    <span class="item-name">Veg Manchurian</span>
+                </div>
+                <div class="menu-item">
+                    <input type="checkbox" class="checkbox" onchange="updateCustomMenuVisibility()">
+                    <span class="item-name">Chilli Chicken</span>
+                </div>
+                <div class="menu-item">
+                    <input type="checkbox" class="checkbox" onchange="updateCustomMenuVisibility()">
+                    <span class="item-name">Chilli Paneer</span>
+                </div>
+                <div class="menu-item">
+                    <input type="checkbox" class="checkbox" onchange="updateCustomMenuVisibility()">
+                    <span class="item-name">Chicken 65</span>
+                </div>
+                <div class="menu-item">
+                    <input type="checkbox" class="checkbox" onchange="updateCustomMenuVisibility()">
+                    <span class="item-name">Gobi 65</span>
+                </div>
+                <div class="menu-item">
+                    <input type="checkbox" class="checkbox" onchange="updateCustomMenuVisibility()">
+                    <span class="item-name">Paneer 65</span>
+                </div>
+            </div>
+            
+            <div class="menu-category" data-category="breads">
+                <div class="category-title">
+                    <span class="category-icon">🥖</span>
+                    Breads & Rotis
+                </div>
+                <div class="menu-item">
+                    <input type="checkbox" class="checkbox" onchange="updateCustomMenuVisibility()">
+                    <span class="item-name">Chapati</span>
+                </div>
+                <div class="menu-item">
+                    <input type="checkbox" class="checkbox" onchange="updateCustomMenuVisibility()">
+                    <span class="item-name">Roti</span>
+                </div>
+                <div class="menu-item">
+                    <input type="checkbox" class="checkbox" onchange="updateCustomMenuVisibility()">
+                    <span class="item-name">Naan</span>
+                </div>
+                <div class="menu-item">
+                    <input type="checkbox" class="checkbox" onchange="updateCustomMenuVisibility()">
+                    <span class="item-name">Butter Naan</span>
+                </div>
+                <div class="menu-item">
+                    <input type="checkbox" class="checkbox" onchange="updateCustomMenuVisibility()">
+                    <span class="item-name">Puri</span>
+                </div>
+            </div>
+            
+            <div class="menu-category" data-category="dal-accompaniments">
+                <div class="category-title">
+                    <span class="category-icon">🥣</span>
+                    Dal & Accompaniments
+                </div>
+                <div class="menu-item">
+                    <input type="checkbox" class="checkbox" onchange="updateCustomMenuVisibility()">
+                    <span class="item-name">Sambar</span>
+                </div>
+                <div class="menu-item">
+                    <input type="checkbox" class="checkbox" onchange="updateCustomMenuVisibility()">
+                    <span class="item-name">Tomato Pappu (Dal)</span>
+                </div>
+                <div class="menu-item">
+                    <input type="checkbox" class="checkbox" onchange="updateCustomMenuVisibility()">
+                    <span class="item-name">Rasam</span>
+                </div>
+                <div class="menu-item">
+                    <input type="checkbox" class="checkbox" onchange="updateCustomMenuVisibility()">
+                    <span class="item-name">Curd</span>
+                </div>
+                <div class="menu-item">
+                    <input type="checkbox" class="checkbox" onchange="updateCustomMenuVisibility()">
+                    <span class="item-name">Raita</span>
+                </div>
+                <div class="menu-item">
+                    <input type="checkbox" class="checkbox" onchange="updateCustomMenuVisibility()">
+                    <span class="item-name">Pachadi</span>
+                </div>
+                <div class="menu-item">
+                    <input type="checkbox" class="checkbox" onchange="updateCustomMenuVisibility()">
+                    <span class="item-name">Papads & Chillies</span>
+                </div>
+            </div>
+            
+            <div class="menu-category" data-category="desserts">
+                <div class="category-title">
+                    <span class="category-icon">🍰</span>
+                    Desserts & Special Items
+                </div>
+                <div class="menu-item">
+                    <input type="checkbox" class="checkbox" onchange="updateCustomMenuVisibility()">
+                    <span class="item-name">Ice Cream (Vanilla/Butterscotch/Strawberry)</span>
+                </div>
+                <div class="menu-item">
+                    <input type="checkbox" class="checkbox" onchange="updateCustomMenuVisibility()">
+                    <span class="item-name">Special Ice Cream</span>
+                </div>
+                <div class="menu-item">
+                    <input type="checkbox" class="checkbox" onchange="updateCustomMenuVisibility()">
+                    <span class="item-name">Malai Roll</span>
+                </div>
+                <div class="menu-item">
+                    <input type="checkbox" class="checkbox" onchange="updateCustomMenuVisibility()">
+                    <span class="item-name">Malai Puri</span>
+                </div>
+                <div class="menu-item">
+                    <input type="checkbox" class="checkbox" onchange="updateCustomMenuVisibility()">
+                    <span class="item-name">Ras Malai</span>
+                </div>
+                <div class="menu-item">
+                    <input type="checkbox" class="checkbox" onchange="updateCustomMenuVisibility()">
+                    <span class="item-name">Sweet</span>
+                </div>
+            </div>
+            
+            <div class="menu-category" data-category="beverages">
+                <div class="category-title">
+                    <span class="category-icon">🥤</span>
+                    Beverages
+                </div>
+                <div class="menu-item">
+                    <input type="checkbox" class="checkbox" onchange="updateCustomMenuVisibility()">
+                    <span class="item-name">Water (Bottles)</span>
+                </div>
+                <div class="menu-item">
+                    <input type="checkbox" class="checkbox" onchange="updateCustomMenuVisibility()">
+                    <span class="item-name">Badam Milk</span>
+                </div>
+                <div class="menu-item">
+                    <input type="checkbox" class="checkbox" onchange="updateCustomMenuVisibility()">
+                    <span class="item-name">Soft Drinks (Coke/Sprite/Fanta)</span>
+                </div>
+                <div class="menu-item">
+                    <input type="checkbox" class="checkbox" onchange="updateCustomMenuVisibility()">
+                    <span class="item-name">Fresh Juice (Orange/Watermelon)</span>
+                </div>
+                <div class="menu-item">
+                    <input type="checkbox" class="checkbox" onchange="updateCustomMenuVisibility()">
+                    <span class="item-name">Buttermilk</span>
+                </div>
+                <div class="menu-item">
+                    <input type="checkbox" class="checkbox" onchange="updateCustomMenuVisibility()">
+                    <span class="item-name">Lassi (Sweet/Salt)</span>
+                </div>
+                <div class="menu-item">
+                    <input type="checkbox" class="checkbox" onchange="updateCustomMenuVisibility()">
+                    <span class="item-name">Tea</span>
+                </div>
+                <div class="menu-item">
+                    <input type="checkbox" class="checkbox" onchange="updateCustomMenuVisibility()">
+                    <span class="item-name">Coffee</span>
+                </div>
+            </div>
+            
+            <!-- Custom dishes category -->
+            <div class="menu-category" data-category="custom" id="customDishesCategory" style="display: none;">
+                <div class="category-title">
+                    <span class="category-icon">✨</span>
+                    Custom Dishes
+                </div>
+                <div id="customDishesContainer"></div>
+            </div>
+        </div>
+        
+        <!-- Custom Price Section -->
+        <div class="custom-price-section" id="customPriceSection">
+            <h3 style="color: #667eea; margin-bottom: 15px;">Enter Price for Custom Menu</h3>
+            <div class="input-group">
+                <label for="customPrice">Price per plate (₹):</label>
+                <input type="number" id="customPrice" placeholder="Enter price per plate" min="0" onchange="calculateTotals()">
+            </div>
+        </div>
+        
+        <div class="summary">
+            <div class="summary-row">
+                <span>Selected Package:</span>
+                <span id="selectedCombo">None</span>
+            </div>
+            <div class="summary-row" id="discountRow" style="display: none;">
+                <span>Package Discount:</span>
+                <span id="discountAmount">₹0</span>
+            </div>
+            <div class="summary-row">
+                <span>Custom Menu Items:</span>
+                <span id="selectedCount">0 items</span>
+            </div>
+            <div class="summary-row">
+                <span>Number of Guests:</span>
+                <span id="guestDisplay">50</span>
+            </div>
+            <div class="summary-row">
+                <span>Cost Per Person:</span>
+                <span id="costPerPerson">₹0</span>
+            </div>
+            <div class="summary-row total-row">
+                <span>Total Event Cost:</span>
+                <span id="totalCost">₹0</span>
+            </div>
+            
+            <div class="action-buttons">
+                <button class="btn btn-pdf" onclick="generatePDF()">📄 Download PDF</button>
+                <button class="btn btn-jpeg" onclick="generateJPEG()">🖼️ Save as JPEG</button>
+                <button class="btn btn-whatsapp" onclick="shareOnWhatsApp()">📱 Share on WhatsApp</button>
+                <button class="btn btn-secondary" onclick="resetForm()">🔄 Reset All</button>
+            </div>
+        <!-- Creator Credit -->
+        <div class="creator-credit">
+            Created by <a href="#" target="_blank">DavidOutis</a>
+        </div>        </div>
+    </div>
+
+    <!-- Quote Modal -->
+    <div id="quoteModal" class="quote-modal">
+        <div class="quote-modal-content">
+            <span class="close-modal" onclick="closeQuoteModal()">&times;</span>
+            <div id="quoteContent"></div>
+            <div class="action-buttons" style="margin-top: 20px;">
+                <button class="btn btn-jpeg" onclick="saveQuoteAsJPEG()">🖼️ Save as JPEG</button>
+                <button class="btn btn-whatsapp" onclick="shareQuoteOnWhatsApp()">📱 Share on WhatsApp</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Updated categorized combo data with new beverages
+        let comboData = {
+            'special-veg': {
+                name: 'Special Veg',
+                price: 180,
+                categories: {
+                    'Starters & Snacks': ['Gulab Jamun', 'Puri', 'Vada'],
+                    'Main Course': ['Veg Biryani', 'Rice'],
+                    'Curries': ['Paneer Green Peas', 'Brinjal Curry', 'Veg Fry'],
+                    'Dal & Accompaniments': ['Sambar', 'Tomato Pappu', 'Curd', 'Raita', 'Papads & Chillies', 'Pachadi'],
+                    'Desserts': ['Ice Cream (Vanilla/Butterscotch/Strawberry)'],
+                    'Beverages': ['Water', 'Badam Milk']
+                }
+            },
+            'veg': {
+                name: 'Veg',
+                price: 150,
+                categories: {
+                    'Starters & Snacks': ['Puri', 'Pulihora (Tamarind Rice)'],
+                    'Main Course': ['Veg Biryani', 'Rice'],
+                    'Curries': ['Potato Kabuli Channa Curry', 'Brinjal Curry', 'Veg Fry'],
+                    'Dal & Accompaniments': ['Sambar', 'Tomato Pappu', 'Curd', 'Raita', 'Papads & Chillies', 'Pachadi'],
+                    'Desserts': ['Ice Cream'],
+                    'Beverages': ['Water', 'Buttermilk']
+                }
+            },
+            'non-veg': {
+                name: 'Non Veg',
+                price: 230,
+                categories: {
+                    'Starters & Snacks': ['Sweet', 'Vada'],
+                    'Main Course': ['Plain Dum Biryani', 'Rice'],
+                    'Non-Veg Items': ['Chicken Curry', 'Fish Fry'],
+                    'Veg Curries': ['Paneer Curry (Veg Only)'],
+                    'Dal & Accompaniments': ['Sambar', 'Tomato Pappu', 'Rasam', 'Curd', 'Papads & Chillies', 'Pachadi'],
+                    'Desserts': ['Ice Cream'],
+                    'Beverages': ['Water', 'Soft Drinks']
+                }
+            },
+            'special-non-veg': {
+                name: 'Special Non Veg',
+                price: 350,
+                categories: {
+                    'Starters & Snacks': ['Sweet', 'Vada'],
+                    'Main Course': ['Chicken Dum Biryani', 'Rice'],
+                    'Non-Veg Items': ['Mutton Curry', 'Prawn Fry'],
+                    'Veg Curries': ['Paneer Curry (Veg Only)'],
+                    'Dal & Accompaniments': ['Sambar', 'Rasam', 'Curd', 'Papads & Chillies', 'Pachadi'],
+                    'Desserts': ['Ice Cream', 'Ras Malai'],
+                    'Beverages': ['Water', 'Fresh Juice', 'Badam Milk']
+                }
+            }
+        };
+
+        // Category names for organizing custom menu items
+        const categoryNames = {
+            'starters': 'Starters & Snacks',
+            'rice-biryani': 'Main Course - Rice & Biryani',
+            'veg-curries': 'Curries - Vegetarian',
+            'non-veg': 'Non-Vegetarian Items',
+            'chinese': 'Chinese & Continental',
+            'breads': 'Breads & Rotis',
+            'dal-accompaniments': 'Dal & Accompaniments',
+            'desserts': 'Desserts & Special Items',
+            'beverages': 'Beverages',
+            'custom': 'Custom Dishes'
+        };
+
+        // Initialize combo categories display
+        function initializeComboCategories() {
+            Object.keys(comboData).forEach(comboKey => {
+                const combo = comboData[comboKey];
+                const categoriesContainer = document.getElementById(`${comboKey}-categories`);
+                
+                if (categoriesContainer) {
+                    let html = '';
+                    Object.entries(combo.categories).forEach(([category, items]) => {
+                        html += `
+                            <div class="combo-category">
+                                <div class="combo-category-name">${category}:</div>
+                                <div class="combo-category-items">${items.join(', ')}</div>
+                            </div>
+                        `;
+                    });
+                    categoriesContainer.innerHTML = html;
+                }
+            });
+        }
+
+        // Updated selectCombo function to allow deselection
+        function selectCombo(comboType, price) {
+            const clickedCard = event.currentTarget;
+            const radio = clickedCard.querySelector('.combo-radio');
+            
+            // If already selected, deselect it
+            if (clickedCard.classList.contains('selected')) {
+                clickedCard.classList.remove('selected');
+                radio.checked = false;
+                calculateTotals();
+                return;
+            }
+            
+            // Otherwise, clear all selections and select this one
+            document.querySelectorAll('.combo-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            clickedCard.classList.add('selected');
+            radio.checked = true;
+            
+            calculateTotals();
+        }
+        
+        function updateCustomMenuVisibility() {
+            const checkboxes = document.querySelectorAll('.menu-item .checkbox:not(.combo-radio)');
+            const checkedCount = Array.from(checkboxes).filter(cb => cb.checked).length;
+            const customPriceSection = document.getElementById('customPriceSection');
+            
+            if (checkedCount > 0) {
+                customPriceSection.classList.add('show');
+            } else {
+                customPriceSection.classList.remove('show');
+                document.getElementById('customPrice').value = '';
+            }
+            
+            calculateTotals();
+        }
+        
+        function addCustomDish() {
+            const dishName = document.getElementById('newDishName').value.trim();
+            if (!dishName) {
+                alert('Please enter a dish name');
+                return;
+            }
+            
+            // Show custom dishes category
+            const customCategory = document.getElementById('customDishesCategory');
+            customCategory.style.display = 'block';
+            
+            // Create new dish element
+            const container = document.getElementById('customDishesContainer');
+            const dishItem = document.createElement('div');
+            dishItem.className = 'menu-item custom-dish-item';
+            dishItem.innerHTML = `
+                <input type="checkbox" class="checkbox" checked onchange="updateCustomMenuVisibility()">
+                <span class="item-name">${dishName}</span>
+            `;
+            
+            container.appendChild(dishItem);
+            document.getElementById('newDishName').value = '';
+            
+            // Update custom menu visibility since we added a checked item
+            updateCustomMenuVisibility();
+        }
+
+        function getSelectedItemsByCategory() {
+            const categories = {};
+            
+            document.querySelectorAll('.menu-category').forEach(category => {
+                const categoryKey = category.dataset.category;
+                const categoryName = categoryNames[categoryKey] || 'Other';
+                const checkedItems = [];
+                
+                category.querySelectorAll('.menu-item .checkbox:checked:not(.combo-radio)').forEach(checkbox => {
+                    const itemName = checkbox.parentElement.querySelector('.item-name').textContent;
+                    checkedItems.push(itemName);
+                });
+                
+                if (checkedItems.length > 0) {
+                    categories[categoryName] = checkedItems;
+                }
+            });
+            
+            return categories;
+        }
+
+        // Updated calculateTotals function to properly show both combo and custom items
+        function calculateTotals() {
+            const guests = parseInt(document.getElementById('guestCount').value) || 0;
+            document.getElementById('guestDisplay').textContent = guests;
+            
+            let totalCost = 0;
+            let comboCost = 0;
+            let customCost = 0;
+            
+            // Calculate combo cost
+            const selectedCombo = document.querySelector('.combo-radio:checked');
+            if (selectedCombo) {
+                const comboType = selectedCombo.dataset.combo;
+                const comboInfo = comboData[comboType];
+                const discountInput = selectedCombo.closest('.combo-select').querySelector('.discount-input');
+                const discount = parseFloat(discountInput.value) || 0;
+                
+                comboCost = comboInfo.price - discount;
+                document.getElementById('selectedCombo').textContent = `${comboInfo.name} (₹${comboCost}/plate)`;
+                
+                if (discount > 0) {
+                    document.getElementById('discountRow').style.display = 'flex';
+                    document.getElementById('discountAmount').textContent = `₹${discount}/plate`;
+                } else {
+                    document.getElementById('discountRow').style.display = 'none';
+                }
+            } else {
+                document.getElementById('selectedCombo').textContent = 'None';
+                document.getElementById('discountRow').style.display = 'none';
+            }
+            
+            // Calculate custom menu cost
+            const customItems = document.querySelectorAll('.menu-item .checkbox:checked:not(.combo-radio)');
+            const customItemCount = customItems.length;
+            document.getElementById('selectedCount').textContent = `${customItemCount} items`;
+            
+            const customPrice = parseFloat(document.getElementById('customPrice').value) || 0;
+            if (customItemCount > 0 && customPrice > 0) {
+                customCost = customPrice;
+            }
+            
+            // Calculate total per person (combo + custom)
+            const perPersonCost = comboCost + customCost;
+            totalCost = perPersonCost * guests;
+            
+            document.getElementById('costPerPerson').textContent = `₹${perPersonCost}`;
+            document.getElementById('totalCost').textContent = `₹${totalCost}`;
+        }
+
+        // Fixed shareOnWhatsApp function
+        function shareOnWhatsApp() {
+            const eventName = document.getElementById('eventName').value || 'Catering Event';
+            const guests = parseInt(document.getElementById('guestCount').value) || 0;
+            const selectedCombo = document.querySelector('.combo-radio:checked');
+            const customItemsByCategory = getSelectedItemsByCategory();
+            const customPrice = parseFloat(document.getElementById('customPrice').value) || 0;
+            
+            let message = `🍽️ *GOMINI CATERINGS* 🍽️\n`;
+            message += `📋 *CATERING QUOTATION*\n\n`;
+            message += `🎉 *Event:* ${eventName}\n`;
+            message += `👥 *Guests:* ${guests}\n`;
+            message += `📅 *Date:* ${new Date().toLocaleDateString()}\n\n`;
+            
+            let totalCost = 0;
+            let comboCost = 0;
+            let customCost = 0;
+            
+            // Add combo details
+            if (selectedCombo) {
+                const comboType = selectedCombo.dataset.combo;
+                const comboInfo = comboData[comboType];
+                const discountInput = selectedCombo.closest('.combo-select').querySelector('.discount-input');
+                const discount = parseFloat(discountInput.value) || 0;
+                const finalPrice = comboInfo.price - discount;
+                comboCost = finalPrice * guests;
+                
+                message += `🍽️ *COMBO PACKAGE*\n`;
+                message += `📦 *${comboInfo.name} Combo*\n`;
+                message += `💰 Original Price: ₹${comboInfo.price}/plate\n`;
+                
+                if (discount > 0) {
+                    message += `🎁 Discount: -₹${discount}/plate\n`;
+                    message += `💵 Final Price: ₹${finalPrice}/plate\n`;
+                }
+                
+                message += `\n*Menu Items:*\n`;
+                Object.entries(comboInfo.categories).forEach(([category, items]) => {
+                    message += `• *${category}:* ${items.join(', ')}\n`;
+                });
+                
+                message += `\n💰 *Combo Total: ₹${comboCost}*\n\n`;
+                totalCost += comboCost;
+            }
+            
+            // Add custom menu details
+            if (Object.keys(customItemsByCategory).length > 0 && customPrice > 0) {
+                const totalCustomItems = Object.values(customItemsByCategory).flat().length;
+                customCost = customPrice * guests;
+                
+                message += `🍴 *CUSTOM MENU SELECTION*\n`;
+                message += `📝 Selected Items: ${totalCustomItems}\n`;
+                message += `💰 Price: ₹${customPrice}/plate\n\n`;
+                
+                Object.entries(customItemsByCategory).forEach(([category, items]) => {
+                    message += `• *${category}:*\n`;
+                    items.forEach(item => {
+                        message += `  - ${item}\n`;
+                    });
+                });
+                
+                message += `\n💰 *Custom Menu Total: ₹${customCost}*\n\n`;
+                totalCost += customCost;
+            }
+            
+            // Add total
+            message += `💰 *GRAND TOTAL: ₹${totalCost}*\n`;
+            
+            // Add contact info
+            message += `📞 *Contact Us:*\n`;
+            message += `📱 9704275597 | 9642193713 | 7075353099\n`;
+            message += `📍 7-16/c Nandamuri Nagar, Gopalapatnam\n`;
+            message += `    Visakhapatnam-530027\n`;
+            message += `🏢 GST: 37ATTPA1425H1ZR\n\n`;
+            message += `Thank you for choosing Gomini Caterings! 🙏`;
+            
+            // Try different approaches for better compatibility
+            try {
+                // Check if mobile
+                const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+                
+                if (isMobile) {
+                    // Use whatsapp:// protocol for mobile
+                    window.location.href = `whatsapp://send?text=${encodeURIComponent(message)}`;
+                } else {
+                    // Use wa.me for desktop
+                    window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
+                }
+            } catch (error) {
+                // Fallback to web WhatsApp
+                window.open(`https://web.whatsapp.com/send?text=${encodeURIComponent(message)}`, '_blank');
+            }
+        }
+
+        function generatePDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF('p', 'mm', 'a4');
+            
+            // Get form data
+            const eventName = document.getElementById('eventName').value || 'Catering Event';
+            const guests = document.getElementById('guestCount').value;
+            const selectedCombo = document.querySelector('.combo-radio:checked');
+            let selectedComboData = null;
+            let discount = 0;
+            
+            if (selectedCombo) {
+                const comboType = selectedCombo.dataset.combo;
+                selectedComboData = comboData[comboType];
+                const discountInput = selectedCombo.closest('.combo-select').querySelector('.discount-input');
+                discount = parseFloat(discountInput.value) || 0;
+            }
+            
+            // Get custom items
+            const customItemsByCategory = getSelectedItemsByCategory();
+            const customPrice = parseFloat(document.getElementById('customPrice').value) || 0;
+            
+            // Calculate totals
+            let comboTotal = 0;
+            let customTotal = 0;
+            if (selectedComboData) {
+                comboTotal = (selectedComboData.price - discount) * guests;
+            }
+            if (Object.keys(customItemsByCategory).length > 0 && customPrice > 0) {
+                customTotal = customPrice * guests;
+            }
+            const grandTotal = comboTotal + customTotal;
+            
+            // Set up page - Amazon invoice style
+            const pageWidth = 210;
+            const pageHeight = 297;
+            const margin = 15;
+            const contentWidth = pageWidth - (2 * margin);
+            
+            // Header - Amazon style (reduced height)
+            doc.setFillColor(35, 47, 62);
+            doc.rect(0, 0, pageWidth, 42, 'F');
+            
+            // Try to add logo
+            try {
+                // Note: In a real implementation, you would need to convert the image to base64
+                // doc.addImage(logoBase64, 'JPEG', margin, 8, 25, 25);
+            } catch (e) {
+                // Logo failed to load
+            }
+            
+            // Company Name
+            doc.setFontSize(26);
+            doc.setTextColor(255, 255, 255);
+            doc.setFont('helvetica', 'bold');
+            doc.text('GOMINI CATERINGS', margin + 5, 22);
+            
+            doc.setFontSize(11);
+            doc.setFont('helvetica', 'normal');
+            doc.text('Premium Catering Services', margin + 5, 30);
+            
+            // Quote label
+            doc.setFontSize(22);
+            doc.setFont('helvetica', 'bold');
+            doc.text('QUOTE', pageWidth - margin, 22, { align: 'right' });
+            
+            // Quote details box
+            doc.setFillColor(245, 245, 245);
+            doc.rect(pageWidth - 75, 26, 70, 12, 'F');
+            doc.setFontSize(9);
+            doc.setTextColor(0, 0, 0);
+            doc.setFont('helvetica', 'normal');
+            doc.text(`Quote #: ${Math.floor(Math.random() * 100000)}`, pageWidth - 70, 31);
+            doc.text(`Date: ${new Date().toLocaleDateString()}`, pageWidth - 70, 35);
+            
+            // Company Details
+            let y = 50;
+            doc.setFontSize(10);
+            doc.setTextColor(60, 60, 60);
+            doc.setFont('helvetica', 'bold');
+            doc.text('FROM:', margin, y);
+            doc.setFont('helvetica', 'normal');
+            doc.text('Gomini Caterings', margin, y + 5);
+            doc.text('7-16/c Nandamuri Nagar, Gopalapatnam', margin, y + 10);
+            doc.text('Visakhapatnam-530027', margin, y + 15);
+            doc.text('Phone: 9704275597 | 9642193713 | 7075353099', margin, y + 20);
+            doc.text('GST: 37ATTPA1425H1ZR', margin, y + 25);
+            
+            // Customer Details
+            const customerName = document.getElementById('customerName').value || 'Valued Customer';
+            doc.setFont('helvetica', 'bold');
+            doc.text('TO:', pageWidth - 75, y);
+            doc.setFont('helvetica', 'normal');
+            doc.text(customerName, pageWidth - 75, y + 5);
+            doc.text(`Event: ${eventName}`, pageWidth - 75, y + 10);
+            doc.text(`Guests: ${guests}`, pageWidth - 75, y + 15);
+            
+            // Table header
+            y = 85;
+            doc.setFillColor(35, 47, 62);
+            doc.rect(margin, y, contentWidth, 9, 'F');
+            doc.setFontSize(11);
+            doc.setTextColor(255, 255, 255);
+            doc.setFont('helvetica', 'bold');
+            doc.text('DESCRIPTION', margin + 3, y + 6);
+            doc.text('QTY', pageWidth - 75, y + 6);
+            doc.text('RATE', pageWidth - 55, y + 6);
+            doc.text('AMOUNT', pageWidth - 25, y + 6, { align: 'right' });
+
+            // Table content
+            y += 13;
+            doc.setFillColor(255, 255, 255);
+            doc.setTextColor(0, 0, 0);
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(10);
+            
+            let subtotal = 0;
+            
+            // Combo package row
+            if (selectedComboData) {
+                const finalPrice = selectedComboData.price - discount;
+                const lineTotal = finalPrice * guests;
+                subtotal += lineTotal;
+                
+                // Row background
+                doc.setFillColor(250, 250, 250);
+                doc.rect(margin, y, contentWidth, 7, 'F');
+                
+                doc.setFont('helvetica', 'bold');
+                doc.text(`${selectedComboData.name} Combo Package`, margin + 3, y + 4.5);
+                doc.setFont('helvetica', 'normal');
+                doc.text(guests.toString(), pageWidth - 75, y + 4.5);
+                doc.text(`₹${finalPrice}`, pageWidth - 55, y + 4.5);
+                doc.text(`₹${lineTotal}`, pageWidth - 25, y + 4.5, { align: 'right' });
+                
+                y += 9;
+                
+                // Combo items detail
+                doc.setFontSize(9);
+                doc.setTextColor(100, 100, 100);
+                doc.setFont('helvetica', 'bold');
+                doc.text('Included Items:', margin + 5, y);
+                y += 6;
+                
+                doc.setFont('helvetica', 'normal');
+                Object.entries(selectedComboData.categories).forEach(([category, items]) => {
+                    // Category header
+                    doc.setFont('helvetica', 'bold');
+                    doc.setTextColor(102, 126, 234);
+                    doc.text(`${category}:`, margin + 8, y);
+                    y += 5;
+                    
+                    // Items in category
+                    doc.setFont('helvetica', 'normal');
+                    doc.setTextColor(80, 80, 80);
+                    const itemsText = items.join(', ');
+                    const splitText = doc.splitTextToSize(itemsText, contentWidth - 20);
+                    splitText.forEach(line => {
+                        doc.text(line, margin + 12, y);
+                        y += 4;
+                    });
+                    y += 2;
+                });
+                
+                if (discount > 0) {
+                    doc.setFontSize(9);
+                    doc.setTextColor(220, 38, 38);
+                    doc.setFont('helvetica', 'bold');
+                    doc.text(`Discount Applied: -₹${discount} per plate`, margin + 8, y);
+                    y += 6;
+                }
+                
+                doc.setTextColor(0, 0, 0);
+                doc.setFontSize(10);
+                y += 8;
+            }
+            
+            // Custom menu items
+            if (Object.keys(customItemsByCategory).length > 0 && customPrice > 0) {
+                const totalCustomItems = Object.values(customItemsByCategory).flat().length;
+                const customLineTotal = customPrice * guests;
+                subtotal += customLineTotal;
+                
+                // Row background
+                doc.setFillColor(245, 245, 245);
+                doc.rect(margin, y, contentWidth, 7, 'F');
+                
+                doc.setFont('helvetica', 'bold');
+                doc.text(`Custom Menu (${totalCustomItems} items)`, margin + 3, y + 4.5);
+                doc.setFont('helvetica', 'normal');
+                doc.text(guests.toString(), pageWidth - 75, y + 4.5);
+                doc.text(`₹${customPrice}`, pageWidth - 55, y + 4.5);
+                doc.text(`₹${customLineTotal}`, pageWidth - 25, y + 4.5, { align: 'right' });
+                
+                y += 9;
+                
+                // Custom items detail
+                doc.setFontSize(9);
+                doc.setTextColor(100, 100, 100);
+                doc.setFont('helvetica', 'bold');
+                doc.text('Custom Selected Items:', margin + 5, y);
+                y += 6;
+                
+                doc.setFont('helvetica', 'normal');
+                
+                // Add custom items by category
+                Object.entries(customItemsByCategory).forEach(([category, items]) => {
+                    // Category header
+                    doc.setFont('helvetica', 'bold');
+                    doc.setTextColor(118, 75, 162);
+                    doc.text(`${category}:`, margin + 8, y);
+                    y += 5;
+                    
+                    // Items in category
+                    doc.setFont('helvetica', 'normal');
+                    doc.setTextColor(80, 80, 80);
+                    const itemsText = items.join(', ');
+                    
+                    // Handle long text by wrapping
+                    const maxWidth = contentWidth - 25;
+                    const lines = doc.splitTextToSize(itemsText, maxWidth);
+                    lines.forEach(line => {
+                        doc.text(line, margin + 12, y);
+                        y += 4;
+                    });
+                    y += 2;
+                });
+                
+                doc.setTextColor(0, 0, 0);
+                doc.setFontSize(10);
+                y += 4;
+            }
+            
+            // Subtotal section with right alignment
+            y = Math.max(y + 8, 185);
+            
+            // Subtotal
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(11);
+            doc.text('Subtotal:', pageWidth - 55, y);
+            doc.text(`₹${subtotal}`, pageWidth - 25, y, { align: 'right' });
+            
+            // Total (reduced size)
+            y += 8;
+            doc.setDrawColor(200, 200, 200);
+            doc.setLineWidth(0.5);
+            doc.line(pageWidth - 75, y, pageWidth - margin, y);
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(14);
+            doc.text('Total:', pageWidth - 55, y + 8);
+            doc.text(`₹${subtotal}`, pageWidth - 25, y + 8, { align: 'right' });
+            
+            // Terms and conditions
+            y += 25;
+            doc.setFontSize(9);
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(60, 60, 60);
+            doc.text('Terms & Conditions:', margin, y);
+            y += 5;
+            
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(8);
+            const terms = [
+                '• 50% advance payment required for booking confirmation',
+                '• Prices are inclusive of service charges',
+                '• Final count to be confirmed 2 days before the event',
+            ];
+            
+            terms.forEach(term => {
+                doc.text(term, margin, y);
+                y += 4;
+            });
+            
+            // Footer
+            y = 270;
+            doc.setFillColor(35, 47, 62);
+            doc.rect(0, y, pageWidth, 27, 'F');
+            doc.setFontSize(10);
+            doc.setTextColor(255, 255, 255);
+            doc.setFont('helvetica', 'bold');
+            doc.text('Thank you for choosing Gomini Caterings!', pageWidth / 2, y + 10, { align: 'center' });
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(8);
+            doc.text('We look forward to making your event memorable.', pageWidth / 2, y + 16, { align: 'center' });
+            doc.setFontSize(9);
+            doc.text('Created by DavidOutis', pageWidth - 10, y + 22, { align: 'right' });
+
+            // Save PDF
+            const fileName = `Gomini_Caterings_Quote_${eventName.replace(/[^a-z0-9]/gi, '_')}_${new Date().toISOString().split('T')[0]}.pdf`;
+            doc.save(fileName);
+        }
+
+        // New function to generate JPEG
+        function generateJPEG() {
+            generateQuoteForJPEG();
+        }
+
+        // Generate quote HTML for JPEG conversion
+        function generateQuoteForJPEG() {
+            const eventName = document.getElementById('eventName').value || 'Catering Event';
+            const guests = document.getElementById('guestCount').value;
+            const selectedCombo = document.querySelector('.combo-radio:checked');
+            const customItemsByCategory = getSelectedItemsByCategory();
+            const customPrice = parseFloat(document.getElementById('customPrice').value) || 0;
+            let quoteHTML = '';
+            
+            // Build quote HTML
+            quoteHTML = `
+                <div id="quoteForJPEG" style="font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; background: white;">
+                    <div style="text-align: center; background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 30px; border-radius: 10px 10px 0 0; position: relative;">
+                        <div style="position: absolute; left: 20px; top: 20px; width: 60px; height: 60px; background: white; border-radius: 10px; padding: 5px;">
+                            <img src="gcl.jpg" style="width: 100%; height: 100%; object-fit: contain;" onerror="this.style.display='none'">
+                        </div>
+                        <h1 style="margin: 0; font-size: 36px;">GOMINI CATERINGS</h1>
+                        <p style="margin: 10px 0 5px;">7-16/c Nandamuri Nagar, Gopalapatnam, Visakhapatnam-530027</p>
+                        <p style="margin: 5px 0;">📞 9704275597 | 9642193713 | 7075353099</p>
+                        <p style="margin: 5px 0;">GST: 37ATTPA1425H1ZR</p>
+                    </div>
+                    
+                    <div style="background: #f9f9f9; padding: 30px; border: 1px solid #ddd; border-top: none;">
+                        <h2 style="color: #667eea; text-align: center; margin-bottom: 30px;">QUOTATION</h2>
+                        <div style="background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                            <p style="margin: 10px 0;"><strong>Event:</strong> ${eventName}</p>
+                            <p style="margin: 10px 0;"><strong>Date:</strong> ${new Date().toLocaleDateString()}</p>
+                            <p style="margin: 10px 0;"><strong>Number of Guests:</strong> ${guests}</p>
+                        </div>
+            `;
+            
+            let totalCost = 0;
+            
+            // Add combo details
+            if (selectedCombo) {
+                const comboType = selectedCombo.dataset.combo;
+                const comboInfo = comboData[comboType];
+                const discountInput = selectedCombo.closest('.combo-select').querySelector('.discount-input');
+                const discount = parseFloat(discountInput.value) || 0;
+                const finalPrice = comboInfo.price - discount;
+                const comboTotal = finalPrice * guests;
+                totalCost += comboTotal;
+                
+                quoteHTML += `
+                    <div style="background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #667eea;">
+                        <h3 style="color: #667eea; margin-top: 0;">Selected Combo Package</h3>
+                        <h4>${comboInfo.name} Combo</h4>
+                        <div style="color: #666; font-size: 14px; margin: 15px 0;">
+                            <strong>Menu Items:</strong><br>
+                `;
+                
+                // Add items by category
+                Object.entries(comboInfo.categories).forEach(([category, items]) => {
+                    quoteHTML += `
+                        <div style="margin-top: 10px;">
+                            <strong style="color: #667eea;">${category}:</strong><br>
+                            <span style="margin-left: 20px;">${items.join(', ')}</span>
+                        </div>
+                    `;
+                });
+                
+                quoteHTML += `
+                        </div>
+                        <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #eee;">
+                            <table style="width: 100%; font-size: 14px;">
+                                <tr>
+                                    <td><strong>Original Price:</strong></td>
+                                    <td style="text-align: right;">₹${comboInfo.price} per plate</td>
+                                </tr>
+                `;
+                
+                if (discount > 0) {
+                    quoteHTML += `
+                                <tr>
+                                    <td style="color: #dc3545;"><strong>Discount:</strong></td>
+                                    <td style="text-align: right; color: #dc3545;">-₹${discount} per plate</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Final Price:</strong></td>
+                                    <td style="text-align: right;">₹${finalPrice} per plate</td>
+                                </tr>
+                    `;
+                }
+                
+                quoteHTML += `
+                                <tr style="font-size: 16px; font-weight: bold; color: #667eea;">
+                                    <td style="padding-top: 10px;">Subtotal:</td>
+                                    <td style="text-align: right; padding-top: 8px;">₹${comboTotal}</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // Add custom menu details
+            if (Object.keys(customItemsByCategory).length > 0 && customPrice > 0) {
+                const totalCustomItems = Object.values(customItemsByCategory).flat().length;
+                const customTotal = customPrice * guests;
+                totalCost += customTotal;
+                
+                quoteHTML += `
+                    <div style="background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #764ba2;">
+                        <h3 style="color: #764ba2; margin-top: 0;">Custom Menu Selection</h3>
+                        <p><strong>Selected Items (${totalCustomItems}):</strong></p>
+                        <div style="color: #666; font-size: 14px; margin: 15px 0;">
+                `;
+                
+                // Add items by category
+                Object.entries(customItemsByCategory).forEach(([category, items]) => {
+                    quoteHTML += `
+                        <div style="margin-top: 10px;">
+                            <strong style="color: #764ba2;">${category}:</strong>
+                            <ul style="margin: 5px 0 5px 25px; padding: 0;">
+                                ${items.map(item => `<li>${item}</li>`).join('')}
+                            </ul>
+                        </div>
+                    `;
+                });
+                
+                quoteHTML += `
+                        </div>
+                        <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #eee;">
+                            <table style="width: 100%; font-size: 14px;">
+                                <tr>
+                                    <td><strong>Price per plate:</strong></td>
+                                    <td style="text-align: right;">₹${customPrice}</td>
+                                </tr>
+                                <tr style="font-size: 16px; font-weight: bold; color: #764ba2;">
+                                    <td style="padding-top: 10px;">Subtotal:</td>
+                                    <td style="text-align: right; padding-top: 8px;">₹${customTotal}</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            quoteHTML += `
+                        <div style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 14px; border-radius: 8px; text-align: center;">
+                            <table style="width: 100%; max-width: 400px; margin: 0 auto;">
+                                <tr>
+                                    <td style="text-align: left; font-size: 16px; font-weight: bold;">TOTAL:</td>
+                                    <td style="text-align: right; font-size: 18px; font-weight: bold;">₹${totalCost}</td>
+                                </tr>
+                            </table>
+                        </div>
+                        
+                        <div style="margin-top: 20px; padding: 15px; background: #f0f0f0; border-radius: 8px; font-size: 12px;">
+                            <strong>Terms & Conditions:</strong>
+                            <ul style="margin: 10px 0 0 20px; padding: 0;">
+                                <li>50% advance payment required for booking confirmation</li>
+                                <li>Prices are inclusive of service charges</li>
+                                <li>Final count to be confirmed 2 days before the event</li>
+                            </ul>
+                        </div>
+                        </div>
+                        <div style="text-align: center; margin-top: 20px; padding: 10px; color: #999; font-size: 11px;">
+                            Created by <span style="color: #667eea; font-weight: 600;">DavidOutis</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Create temporary div for conversion
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = quoteHTML;
+            tempDiv.style.position = 'absolute';
+            tempDiv.style.left = '-9999px';
+            tempDiv.style.top = '0';
+            document.body.appendChild(tempDiv);
+            
+            // Convert to canvas and then JPEG
+            setTimeout(() => {
+                html2canvas(tempDiv.querySelector('#quoteForJPEG'), {
+                    scale: 2,
+                    useCORS: true,
+                    backgroundColor: '#ffffff'
+                }).then(canvas => {
+                    // Convert canvas to JPEG
+                    canvas.toBlob(function(blob) {
+                        const link = document.createElement('a');
+                        link.download = `Gomini_Caterings_Quote_${eventName.replace(/[^a-z0-9]/gi, '_')}_${new Date().toISOString().split('T')[0]}.jpg`;
+                        link.href = URL.createObjectURL(blob);
+                        link.click();
+                        
+                        // Clean up
+                        document.body.removeChild(tempDiv);
+                        URL.revokeObjectURL(link.href);
+                    }, 'image/jpeg', 0.95);
+                }).catch(error => {
+                    console.error('Error generating JPEG:', error);
+                    alert('Error generating JPEG. Please try again.');
+                    document.body.removeChild(tempDiv);
+                });
+            }, 100);
+        }
+        
+        function generateQuote() {
+            const eventName = document.getElementById('eventName').value || 'Catering Event';
+            const guests = document.getElementById('guestCount').value;
+            const selectedCombo = document.querySelector('.combo-radio:checked');
+            const customItemsByCategory = getSelectedItemsByCategory();
+            const customPrice = parseFloat(document.getElementById('customPrice').value) || 0;
+            let quoteHTML = '';
+            
+            // Build quote HTML (same as generateQuoteForJPEG but for modal)
+            quoteHTML = generateQuoteHTML(eventName, guests, selectedCombo, customItemsByCategory, customPrice);
+            
+            // Show in modal
+            document.getElementById('quoteContent').innerHTML = quoteHTML;
+            document.getElementById('quoteModal').style.display = 'block';
+        }
+        
+        function generateQuoteHTML(eventName, guests, selectedCombo, customItemsByCategory, customPrice) {
+            let quoteHTML = '';
+            let totalCost = 0;
+            
+            // Build quote HTML
+            quoteHTML = `
+                <div style="font-family: Arial, sans-serif;">
+                    <div style="text-align: center; background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 30px; border-radius: 10px 10px 0 0; position: relative;">
+                        <div style="position: absolute; left: 20px; top: 20px; width: 60px; height: 60px; background: white; border-radius: 10px; padding: 5px;">
+                            <img src="gcl.jpg" style="width: 100%; height: 100%; object-fit: contain;" onerror="this.style.display='none'">
+                        </div>
+                        <h1 style="margin: 0;color: white; ">GOMINI CATERINGS</h1>
+                        <p style="margin: 10px 0 5px;">7-16/c Nandamuri Nagar, Gopalapatnam, Visakhapatnam-530027</p>
+                        <p style="margin: 5px 0;">📞 9704275597 | 9642193713 | 7075353099</p>
+                        <p style="margin: 5px 0;">GST: 37ATTPA1425H1ZR</p>
+                    </div>
+                    
+                    <div style="background: #f9f9f9; padding: 25px;">
+                        <h2 style="color: #667eea; text-align: center;">QUOTATION</h2>
+                        <div style="background: white; padding: 18px; border-radius: 8px; margin-bottom: 8px;">
+                            <p><strong>Customer:</strong> ${document.getElementById('customerName').value || 'Valued Customer'}</p>
+                            <p><strong>Event:</strong> ${eventName}</p>
+                            <p><strong>Date:</strong> ${new Date().toLocaleDateString()}</p>
+                            <p><strong>Number of Guests:</strong> ${guests}</p>
+                        </div>
+            `;
+            
+            // Add combo details
+            if (selectedCombo) {
+                const comboType = selectedCombo.dataset.combo;
+                const comboInfo = comboData[comboType];
+                const discountInput = selectedCombo.closest('.combo-select').querySelector('.discount-input');
+                const discount = parseFloat(discountInput.value) || 0;
+                const finalPrice = comboInfo.price - discount;
+                const comboTotal = finalPrice * guests;
+                totalCost += comboTotal;
+                
+                quoteHTML += `
+                    <div style="background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #667eea;">
+                        <h3 style="color: #667eea;">Selected Combo Package</h3>
+                        <h4>${comboInfo.name} Combo</h4>
+                        <div style="color: #666; font-size: 14px;">
+                            <strong>Menu Items:</strong><br>
+                `;
+                
+                Object.entries(comboInfo.categories).forEach(([category, items]) => {
+                    quoteHTML += `
+                        <div style="margin-top: 10px;">
+                            <strong style="color: #667eea;">${category}:</strong><br>
+                            <span style="margin-left: 20px;">${items.join(', ')}</span>
+                        </div>
+                    `;
+                });
+                
+                quoteHTML += `
+                        </div>
+                        <table style="width: 100%; margin-top: 15px;">
+                            <tr>
+                                <td><strong>Original Price:</strong></td>
+                                <td style="text-align: right;">₹${comboInfo.price} per plate</td>
+                            </tr>
+                `;
+                
+                if (discount > 0) {
+                    quoteHTML += `
+                            <tr>
+                                <td style="color: #dc3545;"><strong>Discount:</strong></td>
+                                <td style="text-align: right; color: #dc3545;">-₹${discount} per plate</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Final Price:</strong></td>
+                                <td style="text-align: right;">₹${finalPrice} per plate</td>
+                            </tr>
+                    `;
+                }
+                
+                quoteHTML += `
+                            <tr style="font-size: 18px; font-weight: bold; color: #667eea;">
+                                <td style="padding-top: 10px;">Subtotal:</td>
+                                <td style="text-align: right; padding-top: 10px;">₹${comboTotal}</td>
+                            </tr>
+                        </table>
+                    </div>
+                `;
+            }
+            
+            // Add custom menu details
+            if (Object.keys(customItemsByCategory).length > 0 && customPrice > 0) {
+                const totalCustomItems = Object.values(customItemsByCategory).flat().length;
+                const customTotal = customPrice * guests;
+                totalCost += customTotal;
+                
+                quoteHTML += `
+                    <div style="background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #764ba2;">
+                        <h3 style="color: #764ba2;">Custom Menu Selection</h3>
+                        <p><strong>Selected Items (${totalCustomItems}):</strong></p>
+                        <div style="color: #666; font-size: 14px;">
+                `;
+                
+                Object.entries(customItemsByCategory).forEach(([category, items]) => {
+                    quoteHTML += `
+                        <div style="margin-top: 10px;">
+                            <strong style="color: #764ba2;">${category}:</strong>
+                            <ul style="margin: 5px 0 5px 25px;">
+                                ${items.map(item => `<li>${item}</li>`).join('')}
+                            </ul>
+                        </div>
+                    `;
+                });
+                
+                quoteHTML += `
+                        </div>
+                        <table style="width: 100%; margin-top: 15px;">
+                            <tr>
+                                <td><strong>Price per plate:</strong></td>
+                                <td style="text-align: right;">₹${customPrice}</td>
+                            </tr>
+                            <tr style="font-size: 18px; font-weight: bold; color: #764ba2;">
+                                <td style="padding-top: 10px;">Subtotal:</td>
+                                <td style="text-align: right; padding-top: 10px;">₹${customTotal}</td>
+                            </tr>
+                        </table>
+                    </div>
+                `;
+            }
+            
+            quoteHTML += `
+                        <div style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 12px; border-radius: 8px; text-align: center;">
+                            <table style="width: 100%; max-width: 400px; margin: 0 auto;">
+                                <tr>
+                                    <td style="text-align: left; font-size: 14px; font-weight: bold;">TOTAL:</td>
+                                    <td style="text-align: right; font-size: 16px; font-weight: bold;">₹${totalCost}</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            return quoteHTML;
+        }
+        
+        function closeQuoteModal() {
+            document.getElementById('quoteModal').style.display = 'none';
+        }
+        
+        function saveQuoteAsJPEG() {
+            const quoteContent = document.getElementById('quoteContent');
+            const eventName = document.getElementById('eventName').value || 'Catering Event';
+            
+            html2canvas(quoteContent, {
+                scale: 2,
+                useCORS: true,
+                backgroundColor: '#ffffff'
+            }).then(canvas => {
+                canvas.toBlob(function(blob) {
+                    const link = document.createElement('a');
+                    link.download = `Gomini_Caterings_Quote_${eventName.replace(/[^a-z0-9]/gi, '_')}_${new Date().toISOString().split('T')[0]}.jpg`;
+                    link.href = URL.createObjectURL(blob);
+                    link.click();
+                    URL.revokeObjectURL(link.href);
+                }, 'image/jpeg', 0.95);
+            }).catch(error => {
+                console.error('Error generating JPEG:', error);
+                alert('Error generating JPEG. Please try again.');
+            });
+        }
+        
+        function shareQuoteOnWhatsApp() {
+            closeQuoteModal();
+            shareOnWhatsApp();
+        }
+        
+        function resetForm() {
+            // Reset all inputs
+            document.getElementById('eventName').value = '';
+            document.getElementById('guestCount').value = '';
+            document.getElementById('customPrice').value = '';
+            document.getElementById('customerName').value = '';
+            
+            // Uncheck all checkboxes and radios
+            document.querySelectorAll('.checkbox, .radio').forEach(cb => cb.checked = false);
+            
+            // Reset all discount inputs
+            document.querySelectorAll('.discount-input').forEach(input => input.value = '');
+            
+            // Remove combo selections
+            document.querySelectorAll('.combo-card').forEach(card => card.classList.remove('selected'));
+            
+            // Hide custom price section
+            document.getElementById('customPriceSection').classList.remove('show');
+            
+            // Clear custom dishes
+            document.getElementById('customDishesContainer').innerHTML = '';
+            document.getElementById('customDishesCategory').style.display = 'none';
+            document.getElementById('newDishName').value = '';
+            
+            // Recalculate totals
+            calculateTotals();
+        }
+        
+        // Add Enter key support for adding custom dish
+        document.getElementById('newDishName').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                addCustomDish();
+            }
+        });
+        
+        // Prevent accidental zoom on double-tap for iOS
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', function(event) {
+            const now = (new Date()).getTime();
+            if (now - lastTouchEnd <= 300) {
+                event.preventDefault();
+            }
+            lastTouchEnd = now;
+        }, false);
+        
+        // Initialize on page load with clear form
+        document.addEventListener('DOMContentLoaded', function() {
+            // Clear all form data on page load
+            localStorage.removeItem('gominiFormData');
+            sessionStorage.clear();
+            
+            // Reset form to default state
+            document.getElementById('eventName').value = '';
+            document.getElementById('guestCount').value = '50';
+            document.getElementById('customPrice').value = '';
+            document.getElementById('newDishName').value = '';
+            
+            // Clear all selections
+            document.querySelectorAll('.checkbox, .radio').forEach(cb => cb.checked = false);
+            document.querySelectorAll('.discount-input').forEach(input => input.value = '');
+            document.querySelectorAll('.combo-card').forEach(card => card.classList.remove('selected'));
+            
+            // Hide custom sections
+            document.getElementById('customPriceSection').classList.remove('show');
+            document.getElementById('customDishesContainer').innerHTML = '';
+            document.getElementById('customDishesCategory').style.display = 'none';
+            
+            // Initialize combo categories display
+            initializeComboCategories();
+            
+            // Initial calculation
+            calculateTotals();
+            
+            // Add touch feedback
+            const buttons = document.querySelectorAll('.btn');
+            buttons.forEach(button => {
+                button.addEventListener('touchstart', function() {
+                    this.style.transform = 'scale(0.95)';
+                });
+                button.addEventListener('touchend', function() {
+                    this.style.transform = 'scale(1)';
+                });
+            });
+            
+            // Ensure proper input behavior on iOS
+            const inputs = document.querySelectorAll('input[type="number"], input[type="text"]');
+            inputs.forEach(input => {
+                input.addEventListener('focus', function() {
+                    // Prevent zoom on iOS
+                    const viewport = document.querySelector('meta[name="viewport"]');
+                    if (viewport) {
+                        viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0');
+                    }
+                });
+                
+                input.addEventListener('blur', function() {
+                    // Re-enable zoom after input
+                    const viewport = document.querySelector('meta[name="viewport"]');
+                    if (viewport) {
+                        viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no');
+                    }
+                });
+            });
+        });
+                
+        // Handle orientation changes
+        window.addEventListener('orientationchange', function() {
+            setTimeout(function() {
+                window.scrollTo(0, 0);
+            }, 100);
+        });
+        
+        // Improve combo card selection for touch devices
+        const comboCards = document.querySelectorAll('.combo-card');
+        comboCards.forEach(card => {
+            card.addEventListener('touchstart', function() {
+                this.style.transform = 'scale(0.98)';
+            });
+            
+            card.addEventListener('touchend', function() {
+                this.style.transform = 'scale(1)';
+            });
+        });
+        
+        // Add smooth scrolling for mobile
+        function smoothScrollTo(element) {
+            element.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }
+        
+        // Add loading state functionality
+        function showLoading(element) {
+            element.classList.add('loading');
+            element.style.pointerEvents = 'none';
+            element.style.opacity = '0.6';
+        }
+        
+        function hideLoading(element) {
+            element.classList.remove('loading');
+            element.style.pointerEvents = 'auto';
+            element.style.opacity = '1';
+        }
+        
+        // Add validation for form inputs
+        function validateForm() {
+            const eventName = document.getElementById('eventName').value.trim();
+            const guests = parseInt(document.getElementById('guestCount').value);
+            const selectedCombo = document.querySelector('.combo-radio:checked');
+            const customItems = document.querySelectorAll('.menu-item .checkbox:not(.combo-radio):checked');
+            const customPrice = parseFloat(document.getElementById('customPrice').value) || 0;
+            
+            let isValid = true;
+            let errorMessage = '';
+            
+            if (!eventName) {
+                errorMessage += 'Please enter an event name.\n';
+                isValid = false;
+            }
+            
+            if (!guests || guests < 1) {
+                errorMessage += 'Please enter a valid number of guests.\n';
+                isValid = false;
+            }
+            
+            if (!selectedCombo && customItems.length === 0) {
+                errorMessage += 'Please select either a combo package or custom menu items.\n';
+                isValid = false;
+            }
+            
+            if (customItems.length > 0 && customPrice <= 0) {
+                errorMessage += 'Please enter a price for custom menu items.\n';
+                isValid = false;
+            }
+            
+            if (!isValid) {
+                alert(errorMessage);
+                return false;
+            }
+            
+            return true;
+        }
+        
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('quoteModal');
+            if (event.target == modal) {
+                closeQuoteModal();
+            }
+        }
+        
+        
+        // Update reset button to clear saved data
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelector('.btn-secondary').addEventListener('click', function(e) {
+                e.preventDefault();
+                if (confirm('Are you sure you want to reset all data? This will clear all your selections.')) {
+                    resetFormWithClear();
+                }
+            });
+            
+            // Override button click handlers to include validation
+            document.querySelector('.btn-pdf').addEventListener('click', function(e) {
+                e.preventDefault();
+                if (validateForm()) {
+                    showLoading(this);
+                    setTimeout(() => {
+                        try {
+                            generatePDF();
+                        } catch (error) {
+                            console.error('Error generating PDF:', error);
+                            alert('Error generating PDF. Please try again.');
+                        } finally {
+                            hideLoading(this);
+                        }
+                    }, 100);
+                }
+            });
+            
+            document.querySelector('.btn-jpeg').addEventListener('click', function(e) {
+                e.preventDefault();
+                if (validateForm()) {
+                    showLoading(this);
+                    setTimeout(() => {
+                        try {
+                            generateJPEG();
+                        } catch (error) {
+                            console.error('Error generating JPEG:', error);
+                            alert('Error generating JPEG. Please try again.');
+                        } finally {
+                            hideLoading(this);
+                        }
+                    }, 100);
+                }
+            });
+            
+            document.querySelector('.btn-whatsapp').addEventListener('click', function(e) {
+                e.preventDefault();
+                if (validateForm()) {
+                    showLoading(this);
+                    setTimeout(() => {
+                        try {
+                            shareOnWhatsApp();
+                        } catch (error) {
+                            console.error('Error sharing on WhatsApp:', error);
+                            alert('Error sharing on WhatsApp. Please try again.');
+                        } finally {
+                            hideLoading(this);
+                        }
+                    }, 100);
+                }
+            });
+            
+            document.querySelector('.btn-primary').addEventListener('click', function(e) {
+                e.preventDefault();
+                if (validateForm()) {
+                    generateQuote();
+                }
+            });
+        });
+        
+        // Add keyboard navigation support
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                const modal = document.getElementById('quoteModal');
+                if (modal.style.display === 'block') {
+                    closeQuoteModal();
+                }
+            }
+        });
+        
+        // Add print functionality for quotes
+        function printQuote() {
+            const quoteContent = document.getElementById('quoteContent').innerHTML;
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(`
+                <html>
+                <head>
+                    <title>Gomini Caterings - Quote</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; }
+                        @media print {
+                            body { margin: 0; }
+                        }
+                    </style>
+                </head>
+                <body>
+                    ${quoteContent}
+                </body>
+                </html>
+            `);
+            printWindow.document.close();
+            printWindow.print();
+        }
+        
+        // Add responsive behavior for quote modal
+        function adjustModalSize() {
+            const modal = document.querySelector('.quote-modal-content');
+            if (window.innerWidth < 768) {
+                modal.style.maxWidth = '95%';
+                modal.style.margin = '10px auto';
+            } else {
+                modal.style.maxWidth = '700px';
+                modal.style.margin = '0 auto';
+            }
+        }
+        
+        window.addEventListener('resize', adjustModalSize);
+        
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', function() {
+            adjustModalSize();
+        });
+        
+    </script>
+</body>
+</html>
