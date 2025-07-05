@@ -1286,13 +1286,12 @@
             const customPrice = parseFloat(document.getElementById('customPrice').value) || 0;
             
             let message = `🍽️ *GOMINI CATERINGS* 🍽️\n`;
-            message += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n`;
+            message += `━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n`;
             message += `📋 *CATERING QUOTATION*\n\n`;
             message += `👤 *Customer:* ${customerName}\n`;
             message += `🎉 *Event:* ${eventName}\n`;
             message += `👥 *Guests:* ${guests}\n`;
             message += `📅 *Date:* ${new Date().toLocaleDateString()}\n`;
-            message += `⏰ *Time:* ${new Date().toLocaleTimeString()}\n\n`;
             
             let totalCost = 0;
             let comboCost = 0;
@@ -1355,9 +1354,7 @@
             }
             
             // Add summary
-            message += `━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
             message += `📊 *COST SUMMARY*\n`;
-            message += `━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
             
             if (comboCost > 0) {
                 message += `• Combo Package: ₹${comboCost}\n`;
@@ -1372,9 +1369,7 @@
             // Add terms and conditions
             message += `📜 *TERMS & CONDITIONS:*\n`;
             message += `• 50% advance payment required\n`;
-            message += `• Prices include service charges\n`;
             message += `• Final count 2 days before event\n`;
-            message += `• Cancellation charges apply\n\n`;
             
             // Add contact information
             message += `━━━━━━━━━━━━━━━━━━━━━━━━\n`;
@@ -1382,9 +1377,7 @@
             message += `━━━━━━━━━━━━━━━━━━━━━━━━\n`;
             message += `🏢 *Gomini Caterings*\n`;
             message += `📱 9704275597 | 9642193713 | 7075353099\n`;
-            message += `📍 7-16/c Nandamuri Nagar, Gopalapatnam\n`;
-            message += `    Visakhapatnam - 530027\n`;
-            message += `🏛️ GST No: 37ATTPA1425H1ZR\n\n`;
+            message += `📍 7-16/c Nandamuri Nagar, Gopalapatnam,Visakhapatnam - 530027\n`;
             
             message += `✨ *Thank you for choosing Gomini Caterings!*\n`;
             message += `🙏 *We look forward to making your event memorable.*\n\n`;
