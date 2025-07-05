@@ -1280,12 +1280,15 @@
         function shareOnWhatsApp() {
             const eventName = document.getElementById('eventName').value || 'Catering Event';
             const guests = parseInt(document.getElementById('guestCount').value) || 0;
+            const customerName = document.getElementById('customerName').value || 'Valued Customer';
             const selectedCombo = document.querySelector('.combo-radio:checked');
             const customItemsByCategory = getSelectedItemsByCategory();
             const customPrice = parseFloat(document.getElementById('customPrice').value) || 0;
             
             let message = `🍽️ *GOMINI CATERINGS* 🍽️\n`;
+            message += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n`;
             message += `📋 *CATERING QUOTATION*\n\n`;
+            message += `👤 *Customer:* ${customerName}\n`;
             message += `🎉 *Event:* ${eventName}\n`;
             message += `👥 *Guests:* ${guests}\n`;
             message += `📅 *Date:* ${new Date().toLocaleDateString()}\n\n`;
@@ -1304,6 +1307,7 @@
                 comboCost = finalPrice * guests;
                 
                 message += `🍽️ *COMBO PACKAGE*\n`;
+                message += `━━━━━━━━━━━━━━━━━━━━━━━━\n`;
                 message += `📦 *${comboInfo.name} Combo*\n`;
                 message += `💰 Original Price: ₹${comboInfo.price}/plate\n`;
                 
@@ -1327,6 +1331,7 @@
                 customCost = customPrice * guests;
                 
                 message += `🍴 *CUSTOM MENU SELECTION*\n`;
+                message += `━━━━━━━━━━━━━━━━━━━━━━━━\n`;
                 message += `📝 Selected Items: ${totalCustomItems}\n`;
                 message += `💰 Price: ₹${customPrice}/plate\n\n`;
                 
@@ -1342,7 +1347,9 @@
             }
             
             // Add total
+            message += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
             message += `💰 *GRAND TOTAL: ₹${totalCost}*\n`;
+            message += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n`;
             
             // Add contact info
             message += `📞 *Contact Us:*\n`;
@@ -1352,24 +1359,31 @@
             message += `🏢 GST: 37ATTPA1425H1ZR\n\n`;
             message += `Thank you for choosing Gomini Caterings! 🙏`;
             
-            // Try different approaches for better compatibility
+            // Check if mobile or desktop
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            
             try {
-                // Check if mobile
-                const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-                
                 if (isMobile) {
-                    // Use whatsapp:// protocol for mobile
-                    window.location.href = `whatsapp://send?text=${encodeURIComponent(message)}`;
+                    // For mobile devices, use the whatsapp:// protocol
+                    const whatsappURL = `whatsapp://send?text=${encodeURIComponent(message)}`;
+                    window.location.href = whatsappURL;
+                    
+                    // Fallback for mobile if above doesn't work
+                    setTimeout(() => {
+                        window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
+                    }, 1000);
                 } else {
-                    // Use wa.me for desktop
-                    window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
+                    // For desktop, use WhatsApp Web
+                    const whatsappWebURL = `https://web.whatsapp.com/send?text=${encodeURIComponent(message)}`;
+                    window.open(whatsappWebURL, '_blank');
                 }
             } catch (error) {
-                // Fallback to web WhatsApp
-                window.open(`https://web.whatsapp.com/send?text=${encodeURIComponent(message)}`, '_blank');
+                // Final fallback - use wa.me which works on both mobile and desktop
+                console.error('WhatsApp share error:', error);
+                window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
             }
         }
-
+        
         function generatePDF() {
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF('p', 'mm', 'a4');
@@ -2060,7 +2074,7 @@
             document.getElementById('guestCount').value = '';
             document.getElementById('customPrice').value = '';
             document.getElementById('customerName').value = '';
-            
+
             // Uncheck all checkboxes and radios
             document.querySelectorAll('.checkbox, .radio').forEach(cb => cb.checked = false);
             
