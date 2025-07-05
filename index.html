@@ -1276,7 +1276,7 @@
             document.getElementById('totalCost').textContent = `₹${totalCost}`;
         }
 
-        // Fixed shareOnWhatsApp function
+        // Alternative: Split long messages
         function shareOnWhatsApp() {
             const eventName = document.getElementById('eventName').value || 'Catering Event';
             const guests = parseInt(document.getElementById('guestCount').value) || 0;
@@ -1285,105 +1285,52 @@
             const customItemsByCategory = getSelectedItemsByCategory();
             const customPrice = parseFloat(document.getElementById('customPrice').value) || 0;
             
-            let message = `🍽️ *GOMINI CATERINGS* 🍽️\n`;
-            message += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n`;
-            message += `📋 *CATERING QUOTATION*\n\n`;
-            message += `👤 *Customer:* ${customerName}\n`;
-            message += `🎉 *Event:* ${eventName}\n`;
-            message += `👥 *Guests:* ${guests}\n`;
-            message += `📅 *Date:* ${new Date().toLocaleDateString()}\n\n`;
+            // Create a shorter summary message
+            let message = `*GOMINI CATERINGS - QUOTATION*\n\n`;
+            message += `Customer: ${customerName}\n`;
+            message += `Event: ${eventName}\n`;
+            message += `Guests: ${guests}\n`;
+            message += `Date: ${new Date().toLocaleDateString()}\n\n`;
             
             let totalCost = 0;
-            let comboCost = 0;
-            let customCost = 0;
+            let itemsList = '';
             
-            // Add combo details
             if (selectedCombo) {
                 const comboType = selectedCombo.dataset.combo;
                 const comboInfo = comboData[comboType];
                 const discountInput = selectedCombo.closest('.combo-select').querySelector('.discount-input');
                 const discount = parseFloat(discountInput.value) || 0;
                 const finalPrice = comboInfo.price - discount;
-                comboCost = finalPrice * guests;
+                totalCost += finalPrice * guests;
                 
-                message += `🍽️ *COMBO PACKAGE*\n`;
-                message += `━━━━━━━━━━━━━━━━━━━━━━━━\n`;
-                message += `📦 *${comboInfo.name} Combo*\n`;
-                message += `💰 Original Price: ₹${comboInfo.price}/plate\n`;
+                message += `Package: ${comboInfo.name} Combo @ ₹${finalPrice}/plate\n`;
                 
-                if (discount > 0) {
-                    message += `🎁 Discount: -₹${discount}/plate\n`;
-                    message += `💵 Final Price: ₹${finalPrice}/plate\n`;
-                }
-                
-                message += `\n*Menu Items:*\n`;
-                Object.entries(comboInfo.categories).forEach(([category, items]) => {
-                    message += `• *${category}:* ${items.join(', ')}\n`;
+                // Create separate items list
+                itemsList += `*${comboInfo.name} Combo Items:*\n`;
+                Object.entries(comboInfo.categories).forEach(([cat, items]) => {
+                    itemsList += `• ${items.join(', ')}\n`;
                 });
-                
-                message += `\n💰 *Combo Total: ₹${comboCost}*\n\n`;
-                totalCost += comboCost;
             }
             
-            // Add custom menu details
             if (Object.keys(customItemsByCategory).length > 0 && customPrice > 0) {
-                const totalCustomItems = Object.values(customItemsByCategory).flat().length;
-                customCost = customPrice * guests;
+                totalCost += customPrice * guests;
+                message += `Custom Menu @ ₹${customPrice}/plate\n`;
                 
-                message += `🍴 *CUSTOM MENU SELECTION*\n`;
-                message += `━━━━━━━━━━━━━━━━━━━━━━━━\n`;
-                message += `📝 Selected Items: ${totalCustomItems}\n`;
-                message += `💰 Price: ₹${customPrice}/plate\n\n`;
-                
-                Object.entries(customItemsByCategory).forEach(([category, items]) => {
-                    message += `• *${category}:*\n`;
-                    items.forEach(item => {
-                        message += `  - ${item}\n`;
-                    });
+                itemsList += `\n*Custom Items:*\n`;
+                Object.values(customItemsByCategory).flat().forEach(item => {
+                    itemsList += `• ${item}\n`;
                 });
-                
-                message += `\n💰 *Custom Menu Total: ₹${customCost}*\n\n`;
-                totalCost += customCost;
             }
             
-            // Add total
-            message += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
-            message += `💰 *GRAND TOTAL: ₹${totalCost}*\n`;
-            message += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n`;
+            message += `\n*TOTAL: ₹${totalCost}*\n\n`;
+            message += `Contact: 9704275597\n`;
+            message += itemsList;
             
-            // Add contact info
-            message += `📞 *Contact Us:*\n`;
-            message += `📱 9704275597 | 9642193713 | 7075353099\n`;
-            message += `📍 7-16/c Nandamuri Nagar, Gopalapatnam\n`;
-            message += `    Visakhapatnam-530027\n`;
-            message += `🏢 GST: 37ATTPA1425H1ZR\n\n`;
-            message += `Thank you for choosing Gomini Caterings! 🙏`;
-            
-            // Check if mobile or desktop
-            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-            
-            try {
-                if (isMobile) {
-                    // For mobile devices, use the whatsapp:// protocol
-                    const whatsappURL = `whatsapp://send?text=${encodeURIComponent(message)}`;
-                    window.location.href = whatsappURL;
-                    
-                    // Fallback for mobile if above doesn't work
-                    setTimeout(() => {
-                        window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
-                    }, 1000);
-                } else {
-                    // For desktop, use WhatsApp Web
-                    const whatsappWebURL = `https://web.whatsapp.com/send?text=${encodeURIComponent(message)}`;
-                    window.open(whatsappWebURL, '_blank');
-                }
-            } catch (error) {
-                // Final fallback - use wa.me which works on both mobile and desktop
-                console.error('WhatsApp share error:', error);
-                window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
-            }
+            // Send message
+            const encodedMessage = encodeURIComponent(message);
+            window.open(`https://wa.me/?text=${encodedMessage}`, '_blank');
         }
-        
+                
         function generatePDF() {
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF('p', 'mm', 'a4');
